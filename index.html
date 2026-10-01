@@ -1,1 +1,493 @@
-Exemple : Le lion, l’éléphant, le colibri, le dauphin, la baleine, le boa, la grenouille, …
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le texte descriptif</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6', // Blue 500
+                        secondary: '#F59E0B', // Amber 500
+                        success: '#10B981', // Emerald 500
+                        danger: '#EF4444', // Red 500
+                        dark: '#1E293B', // Slate 800
+                        light: '#F8FAFC', // Slate 50
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- RÈGLE BABEL OBLIGATOIRE -->
+    <script>
+        Babel.registerPreset('react-classic', {
+            presets: [
+                [Babel.availablePresets['react'], { runtime: 'classic' }]
+            ]
+        });
+    </script>
+</head>
+<body class="h-full bg-slate-100 text-slate-800 font-sans overflow-hidden">
+    <div id="root" class="h-full"></div>
+
+    <script type="text/babel" data-type="module">
+        const { useState, useEffect } = React;
+
+        const EXEMPLES = [
+            {
+                titre: "L'Éléphantoucan multicolore",
+                para1: "L'Éléphantoucan est un animal très étrange qui ressemble à un petit éléphant avec d'immenses ailes de toucan. Son corps est recouvert de poils bleus et doux, mais sa trompe est rouge vif. Cette créature est extrêmement joyeuse et très curieuse, elle aime faire des blagues aux autres animaux de la forêt.",
+                para2: "Concernant son alimentation, l'Éléphantoucan est frugivore. Il se nourrit principalement de mangues sucrées et de baies sauvages qu'il attrape facilement dans les grands arbres grâce à sa longue trompe.",
+                para3: "Enfin, cet animal vit dans la jungle tropicale humide, au sommet des plus hauts palmiers. Il se construit un grand nid de feuilles épaisses pour se protéger de la pluie."
+            },
+            {
+                titre: "Le Serpentaigle de feu",
+                para1: "Le Serpentaigle est une créature fascinante qui possède un long corps de serpent écailleux et deux grandes serres d'aigle. Ses écailles brillantes sont jaunes et oranges comme des flammes. C'est un animal très timide et solitaire qui se cache dès qu'il entend un bruit.",
+                para2: "Pour s'alimenter, ce reptile particulier chasse de petits insectes dorés et des poissons lumineux. Il utilise sa vision perçante pour repérer ses proies au fond des rivières.",
+                para3: "Cet animal habite dans les grottes sombres des montagnes rocheuses. Il dort sur des pierres chaudes pour conserver sa température corporelle durant la nuit."
+            },
+            {
+                titre: "Le Lapin-Loup arctique",
+                para1: "Le Lapin-Loup est une bête surprenante avec de longues oreilles pointues et une épaisse fourrure blanche. Il possède de petites griffes tranchantes et une queue touffue. Malgré son apparence un peu effrayante, cet animal est très gourmand et plutôt pacifique avec les humains.",
+                para2: "Quant à son alimentation, le Lapin-Loup est omnivore. Il adore grignoter des racines glacées, mais il mange aussi de petits crustacés qu'il pêche sous la glace.",
+                para3: "Pour terminer, cette créature vit dans la toundra enneigée du Grand Nord. Elle creuse de profonds terriers sous la neige épaisse pour se protéger du vent glacial."
+            }
+        ];
+
+        const VOCABULAIRE = [
+            {
+                categorie: "1. Caractéristiques physiques",
+                sousTitre: "(Adjectifs pour enrichir le GN)",
+                mots: [
+                    { mot: "Fluorescent(e)", def: "qui brille dans le noir." },
+                    { mot: "Gigantesque", def: "extrêmement grand ou imposant." },
+                    { mot: "Écailleux / Écailleuse", def: "recouvert d'écailles." },
+                    { mot: "Translucide", def: "presque transparent." },
+                    { mot: "Plumeux / Plumeuse", def: "recouvert d'un plumage doux." },
+                    { mot: "Cornu(e)", def: "qui possède des cornes." },
+                    { mot: "Multicolore", def: "qui arbore plusieurs couleurs vives." },
+                    { mot: "Robuste", def: "fort, solide et résistant." },
+                    { mot: "Tranchant(e)", def: "très aiguisé (griffes, dents)." },
+                    { mot: "Agile", def: "rapide, souple et habile." },
+                ],
+                extra: ["Peau recouverte d'écailles", "Peau nue", "Peau recouverte de poils"]
+            },
+            {
+                categorie: "2. Alimentation",
+                sousTitre: "(Régimes et verbes d'action)",
+                mots: [
+                    { mot: "Herbivore", def: "qui mange des végétaux." },
+                    { mot: "Carnivore", def: "qui chasse d'autres animaux." },
+                    { mot: "Frugivore", def: "qui adore les fruits." },
+                    { mot: "Omnivore", def: "qui mange de tout." },
+                    { mot: "Friandise", def: "aliment rare et apprécié." },
+                    { mot: "Grignoter", def: "manger à petites bouchées." },
+                    { mot: "Proie", def: "animal pourchassé pour servir de nourriture." },
+                    { mot: "Nectar", def: "liquide sucré des fleurs." },
+                    { mot: "Gourmand(e)", def: "qui mange avec plaisir." },
+                    { mot: "S'abreuver", def: "boire de l'eau à une source." }
+                ],
+                extra: []
+            },
+            {
+                categorie: "3. Habitat",
+                sousTitre: "(Lieux de vie, abris et climats)",
+                mots: [
+                    { mot: "Souterrain", def: "sous la terre (galerie, tunnel)." },
+                    { mot: "Tropical(e)", def: "chaud, humide, végétation dense." },
+                    { mot: "Caverne", def: "grotte sombre dans la roche." },
+                    { mot: "Tanière", def: "abri naturel et douillet." },
+                    { mot: "Inexploré(e)", def: "endroit secret." },
+                    { mot: "Sommet", def: "partie la plus haute d'une montagne." },
+                    { mot: "Aquatique", def: "qui vit dans l'eau." },
+                    { mot: "Marécage", def: "zone très humide avec boue." },
+                    { mot: "Glacial(e)", def: "très froid, recouvert de glace." },
+                    { mot: "Feuillu(e)", def: "abri construit avec des feuilles." }
+                ],
+                extra: []
+            }
+        ];
+
+        const ACTIVITE_STEPS = [
+            {
+                type: "intro",
+                titre: "Créons notre créature ensemble !",
+                contenu: "Bonjour la classe ! Aujourd'hui, nous allons écrire le texte descriptif de notre animal étrange. Notre objectif : donner assez d'informations pour qu'un lecteur puisse l'imaginer sans le voir.\n\nPrêts à construire des super phrases, à respecter les critères d'écriture, à utiliser un vocabulaire précis et varié et à corriger tes groupes du nom et l'orthographe de tes mots ?",
+                bouton: "Commencer la modélisation"
+            },
+            {
+                type: "question",
+                titre: "Paragraphe 1 : Physique et Caractère",
+                consigne: "Voici le début de notre texte proposé par un élève. Trouve la bonne façon d'accorder l'adjectif avec le nom chef 'ailes' (féminin pluriel).",
+                phraseAvant: "Le Dragofox est une créature majestueuse. Il possède un pelage fluorescent, de longues cornes pointues et de grandes ailes ",
+                phraseApres: ". Malgré son apparence effrayante, il est très timide.",
+                options: [
+                    { texte: "vert", correct: false, feedback: "Attention ! 'ailes' est féminin pluriel. 'vert' est masculin singulier." },
+                    { texte: "verts", correct: false, feedback: "Presque ! Tu as mis le pluriel (s), mais 'ailes' est féminin. Il manque le 'e'." },
+                    { texte: "verte", correct: false, feedback: "Presque ! Tu as mis le féminin (e), mais il y a plusieurs ailes. Il manque le pluriel." },
+                    { texte: "vertes", correct: true, feedback: "Bravo ! L'adjectif s'accorde en genre (féminin -> e) et en nombre (pluriel -> s) avec le nom chef 'ailes'." }
+                ]
+            },
+            {
+                type: "question",
+                titre: "Paragraphe 2 : Alimentation",
+                consigne: "Le mot souligné semble mal orthographié. Imagine que nous cherchons dans le dictionnaire Usito. Quelle est la bonne orthographe ?",
+                phraseAvant: "Pour se nourrir, cet animal est ",
+                phraseApres: " et chasse de petits insectes.",
+                options: [
+                    { texte: "karnivor", correct: false, feedback: "Non, ce n'est pas la bonne orthographe. Regarde la racine du mot 'carnet' ou 'carnaval'." },
+                    { texte: "carnivore", correct: true, feedback: "Super ! En cherchant dans Usito, on confirme que 'carnivore' s'écrit avec un C et se termine par un E." },
+                    { texte: "carnivor", correct: false, feedback: "Presque ! Il manque une lettre muette à la fin de ce mot en français." }
+                ]
+            },
+            {
+                type: "question",
+                titre: "Paragraphe 3 : Habitat",
+                consigne: "Il faut débuter notre dernier paragraphe avec un organisateur textuel et la bonne ponctuation. Que choisis-tu ?",
+                phraseAvant: "",
+                phraseApres: ", cet animal habite dans les grottes sombres.",
+                options: [
+                    { texte: "enfin", correct: false, feedback: "Attention ! Que met-on toujours au début d'une phrase ?" },
+                    { texte: "Enfin", correct: true, feedback: "Excellent ! Une majuscule au début, et une virgule après l'organisateur textuel." },
+                    { texte: "pour terminer", correct: false, feedback: "C'est un bon organisateur, mais il manque la majuscule du début de phrase !" }
+                ]
+            },
+            {
+                type: "fin",
+                titre: "Texte complété !",
+                contenu: "Félicitations la classe ! Vous avez corrigé le texte. Voici le résultat :\n\nLe Dragofox est une créature majestueuse. Il possède un pelage fluorescent, de longues cornes pointues et de grandes ailes vertes. Malgré son apparence effrayante, il est très timide.\nPour se nourrir, cet animal est carnivore et chasse de petits insectes.\nEnfin, cet animal habite dans les grottes sombres.",
+                bouton: "Recommencer la modélisation"
+            }
+        ];
+
+        const OngletVocabulaire = () => (
+            <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-dark text-center mb-8">Banque de mots pour s'inspirer</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {VOCABULAIRE.map((cat, index) => (
+                        <div key={index} className="bg-white rounded-xl shadow-md p-6 border-t-4 border-primary">
+                            <h3 className="text-xl font-bold text-primary mb-1">{cat.categorie}</h3>
+                            <p className="text-sm text-slate-500 mb-4 italic">{cat.sousTitre}</p>
+                            <ul className="space-y-3">
+                                {cat.mots.map((mot, idx) => (
+                                    <li key={idx} className="text-slate-700 leading-tight">
+                                        <span className="font-semibold text-dark">{mot.mot}</span> <br/>
+                                        <span className="text-sm text-slate-600">{mot.def}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            {cat.extra.length > 0 && (
+                                <div className="mt-4 pt-4 border-t border-slate-100">
+                                    <ul className="list-disc pl-5 text-sm font-medium text-slate-700 space-y-1">
+                                        {cat.extra.map((ex, idx) => <li key={idx}>{ex}</li>)}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const OngletExemples = () => (
+            <div className="space-y-8 max-w-5xl mx-auto">
+                <h2 className="text-3xl font-bold text-dark text-center mb-6">Textes descriptifs modèles</h2>
+                <div className="grid gap-8">
+                    {EXEMPLES.map((ex, index) => (
+                        <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200">
+                            <div className="bg-slate-800 text-white p-4 text-center">
+                                <h3 className="text-2xl font-bold">{ex.titre}</h3>
+                            </div>
+                            <div className="p-6 md:p-8 space-y-6 text-lg">
+                                <div className="relative">
+                                    <span className="absolute -left-4 top-1 w-2 h-full bg-blue-400 rounded-r-md"></span>
+                                    <p className="text-slate-700 leading-relaxed pl-4">
+                                        <strong className="text-blue-600 block mb-1 text-sm uppercase tracking-wide">1. Présentation & Physique</strong>
+                                        {ex.para1}
+                                    </p>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute -left-4 top-1 w-2 h-full bg-emerald-400 rounded-r-md"></span>
+                                    <p className="text-slate-700 leading-relaxed pl-4">
+                                        <strong className="text-emerald-600 block mb-1 text-sm uppercase tracking-wide">2. Alimentation</strong>
+                                        {ex.para2}
+                                    </p>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute -left-4 top-1 w-2 h-full bg-amber-400 rounded-r-md"></span>
+                                    <p className="text-slate-700 leading-relaxed pl-4">
+                                        <strong className="text-amber-600 block mb-1 text-sm uppercase tracking-wide">3. Habitat</strong>
+                                        {ex.para3}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const OngletCriteres = () => (
+            <div className="max-w-4xl mx-auto">
+                <h2 className="text-3xl font-bold text-dark text-center mb-8">Critères de réussite du texte</h2>
+                <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-primary text-white text-lg">
+                                <th className="p-4 border-b border-primary-dark">Section du texte</th>
+                                <th className="p-4 border-b border-primary-dark">Ce qu'on doit y retrouver</th>
+                                <th className="p-4 border-b border-primary-dark">Outils de vérification</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-lg">
+                            <tr className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                                <td className="p-4 font-bold text-blue-600">Paragraphe 1</td>
+                                <td className="p-4 text-slate-700">Nom de l'animal, description physique et trait de caractère.</td>
+                                <td className="p-4 text-slate-700 font-medium bg-blue-50">Accords dans le GN<br/><span className="text-sm font-normal text-slate-500">(Déterminant + Nom + Adjectif)</span></td>
+                            </tr>
+                            <tr className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                                <td className="p-4 font-bold text-emerald-600">Paragraphe 2</td>
+                                <td className="p-4 text-slate-700">Régime alimentaire et méthode de chasse ou récolte.</td>
+                                <td className="p-4 text-slate-700 font-medium bg-emerald-50">Dictionnaire Usito<br/><span className="text-sm font-normal text-slate-500">(Orthographe des mots complexes)</span></td>
+                            </tr>
+                            <tr className="hover:bg-slate-50 transition-colors">
+                                <td className="p-4 font-bold text-amber-600">Paragraphe 3</td>
+                                <td className="p-4 text-slate-700">Lieu de vie, abri et adaptation à l'environnement.</td>
+                                <td className="p-4 text-slate-700 font-medium bg-amber-50">Ponctuation<br/><span className="text-sm font-normal text-slate-500">(Majuscules, points, organisateurs)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+
+        const OngletActivite = () => {
+            const [stepIndex, setStepIndex] = useState(0);
+            const [selectedOption, setSelectedOption] = useState(null);
+            const [isCorrect, setIsCorrect] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+
+            const currentStep = ACTIVITE_STEPS[stepIndex];
+
+            const handleOptionClick = (optionIndex, correct) => {
+                setSelectedOption(optionIndex);
+                setIsCorrect(correct);
+                setShowFeedback(true);
+            };
+
+            const handleNext = () => {
+                // Règle stricte: Réinitialiser tous les états locaux de la question
+                setSelectedOption(null);
+                setIsCorrect(null);
+                setShowFeedback(false);
+                
+                // Règle stricte: Vérifier les limites du tableau
+                if (stepIndex < ACTIVITE_STEPS.length - 1) {
+                    setStepIndex(stepIndex + 1);
+                } else {
+                    setStepIndex(0); // Restart
+                }
+            };
+
+            if (currentStep.type === 'intro' || currentStep.type === 'fin') {
+                return (
+                    <div className="flex flex-col items-center justify-center h-full max-w-3xl mx-auto text-center space-y-8 animate-fade-in">
+                        <div className={`p-6 rounded-full inline-block ${currentStep.type === 'intro' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {currentStep.type === 'intro' 
+                                    ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                }
+                            </svg>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-bold text-dark">{currentStep.titre}</h2>
+                        <p className="text-xl md:text-2xl text-slate-600 leading-relaxed whitespace-pre-line">{currentStep.contenu}</p>
+                        <button 
+                            onClick={handleNext}
+                            className="mt-8 bg-primary hover:bg-blue-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg transform transition hover:scale-105 active:scale-95"
+                        >
+                            {currentStep.bouton}
+                        </button>
+                    </div>
+                );
+            }
+
+            // Affichage d'une question
+            return (
+                <div className="flex flex-col h-full max-w-5xl mx-auto animate-fade-in pb-10">
+                    {/* Header Question */}
+                    <div className="bg-slate-800 rounded-t-2xl p-6 text-white text-center shadow-md">
+                        <span className="text-blue-300 font-semibold tracking-wider uppercase text-sm mb-2 block">
+                            Modélisation au TNI - Étape {stepIndex} sur {ACTIVITE_STEPS.length - 2}
+                        </span>
+                        <h2 className="text-3xl font-bold">{currentStep.titre}</h2>
+                    </div>
+
+                    {/* Zone de travail */}
+                    <div className="bg-white rounded-b-2xl shadow-lg p-6 md:p-10 flex-grow flex flex-col justify-center space-y-8 border-x border-b border-slate-200">
+                        
+                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                            <p className="text-xl text-blue-900 font-medium">👨‍🏫 {currentStep.consigne}</p>
+                        </div>
+
+                        {/* La phrase à compléter */}
+                        <div className="text-center py-8 px-4 bg-slate-50 rounded-xl border border-slate-200 text-2xl md:text-3xl font-medium leading-relaxed">
+                            <span className="text-slate-700">{currentStep.phraseAvant}</span>
+                            
+                            <span className={`inline-block mx-2 pb-1 border-b-4 font-bold transition-colors duration-300 ${
+                                selectedOption === null ? 'text-primary border-primary border-dashed' :
+                                isCorrect ? 'text-success border-success' : 'text-danger border-danger'
+                            }`}>
+                                {selectedOption !== null 
+                                    ? currentStep.options[selectedOption].texte 
+                                    : "_________"
+                                }
+                            </span>
+                            
+                            <span className="text-slate-700">{currentStep.phraseApres}</span>
+                        </div>
+
+                        {/* Options */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {currentStep.options.map((opt, idx) => {
+                                let btnStyle = "bg-white border-2 border-slate-200 text-slate-700 hover:border-primary hover:bg-blue-50";
+                                if (showFeedback) {
+                                    if (selectedOption === idx) {
+                                        btnStyle = opt.correct 
+                                            ? "bg-success border-success text-white shadow-lg transform scale-105" 
+                                            : "bg-danger border-danger text-white";
+                                    } else {
+                                        btnStyle = "bg-slate-100 border-slate-200 text-slate-400 opacity-50 cursor-not-allowed";
+                                    }
+                                }
+
+                                return (
+                                    <button 
+                                        key={idx}
+                                        disabled={showFeedback && selectedOption !== null}
+                                        onClick={() => handleOptionClick(idx, opt.correct)}
+                                        className={`text-xl font-bold py-4 px-6 rounded-xl transition-all duration-200 ${btnStyle}`}
+                                    >
+                                        {opt.texte}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Feedback et bouton Suivant */}
+                        {showFeedback && (
+                            <div className={`p-6 rounded-xl animate-fade-in flex flex-col md:flex-row items-center justify-between gap-4 ${
+                                isCorrect ? 'bg-emerald-100 border-2 border-emerald-500' : 'bg-red-100 border-2 border-red-500'
+                            }`}>
+                                <div className="flex items-center gap-4">
+                                    <div className={`p-3 rounded-full ${isCorrect ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                                        {isCorrect 
+                                            ? <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                            : <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                        }
+                                    </div>
+                                    <p className={`text-xl font-medium ${isCorrect ? 'text-emerald-900' : 'text-red-900'}`}>
+                                        {currentStep.options[selectedOption].feedback}
+                                    </p>
+                                </div>
+                                
+                                {isCorrect && (
+                                    <button 
+                                        onClick={handleNext}
+                                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow transition-colors text-lg whitespace-nowrap"
+                                    >
+                                        Étape suivante →
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('activite');
+
+            const TABS = [
+                { id: 'activite', label: 'Modélisation (TNI)', icon: '✏️' },
+                { id: 'exemples', label: 'Textes modèles', icon: '📖' },
+                { id: 'criteres', label: 'Critères', icon: '✅' },
+                { id: 'vocabulaire', label: 'Vocabulaire', icon: '🧠' },
+            ];
+
+            return (
+                <div className="flex flex-col h-screen bg-slate-100">
+                    {/* Header & Nav */}
+                    <header className="bg-white shadow-sm border-b border-slate-200 z-10">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-primary p-2 rounded-lg text-white">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                    </div>
+                                    <h1 className="text-2xl font-bold text-dark tracking-tight">Le texte descriptif</h1>
+                                </div>
+                                
+                                <nav className="flex space-x-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
+                                    {TABS.map(tab => (
+                                        <button
+                                            key={tab.id}
+                                            onClick={() => setActiveTab(tab.id)}
+                                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm md:text-base font-semibold whitespace-nowrap transition-colors ${
+                                                activeTab === tab.id 
+                                                    ? 'bg-primary text-white shadow-md' 
+                                                    : 'bg-slate-50 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                                            }`}
+                                        >
+                                            <span>{tab.icon}</span>
+                                            {tab.label}
+                                        </button>
+                                    ))}
+                                </nav>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Contenu principal (scrollable) */}
+                    <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
+                        <div className="h-full mx-auto max-w-7xl">
+                            {activeTab === 'activite' && <OngletActivite />}
+                            {activeTab === 'exemples' && <OngletExemples />}
+                            {activeTab === 'criteres' && <OngletCriteres />}
+                            {activeTab === 'vocabulaire' && <OngletVocabulaire />}
+                        </div>
+                    </main>
+
+                    {/* Styles additionnels */}
+                    <style dangerouslySetInnerHTML={{__html: `
+                        .scrollbar-hide::-webkit-scrollbar { display: none; }
+                        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+                        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+                    `}} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
